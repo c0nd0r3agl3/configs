@@ -9,6 +9,11 @@
 
 # Replace <insert> with IP address 
 
+# add lines below to .ovpn file to fix issues with openvpn ipv6 connection 
+# pull-filter ignore "ifconfig-ipv6 "
+# pull-filter ignore "route-ipv6 "
+  
+
 matches:
   # Simple text replacement
   - trigger: ":espanso"
@@ -259,5 +264,3 @@ matches:
     # check for backup passwords in linux files
   - trigger: ":backup"
     replace: "cd /var/backups && cat .bak.passwd | grep -i password"
-
-
