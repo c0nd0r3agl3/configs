@@ -58,7 +58,7 @@ matches:
     replace: "threader3000"
 
   # nmap scanning 
-  - trigger: ":nmap ip"
+  - trigger: ":nmap dir"
     replace: "mkdir nmap && echo <insert> > ipList.txt"    
 
   - trigger: ":nmap sweep"
@@ -91,7 +91,6 @@ matches:
   - trigger: ":nmap decoy"
     replace: "nmap -D RND:10 -sS -p- -Pn --disable-arp-ping -iL ipList.txt -v -oA nmap/decoyScan"
 
-
   #web scanning
   - trigger: ":nikto"
     replace: "nikto -timeout 30 -output nikto.txt -h http://"
@@ -103,53 +102,91 @@ matches:
     replace: "amass enum -active -brute -w /usr/share/amass/wordlists/deepmagic.com_top50kprefixes.txt -src -ip -dir amass_scan -o amass_results_IP.txt -d WEBSITE"
 
   - trigger: ":ferox com"
-    replace: "feroxbuster --wordlist /usr/share/seclists/Discovery/Web-Content/common.txt  --threads 150 --redirects --depth 6 -x pdf -x js,html -x php txt json,docx --output feroxContentScan.md --url http://"
+    replace: "feroxbuster --wordlist /usr/share/seclists/Discovery/Web-Content/common.txt  --threads 100 --redirects --extract-links --depth 10 -x pdf -x js -x php -x txt  -x json -x cgi --output feroxCommonScan.md --url http://"
 
   - trigger: ":ferox small"
-    replace: "feroxbuster --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt --threads 150 --redirects --depth 6 --extract-links --output feroxContentScan.md --url http://"
+    replace: "feroxbuster --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt --threads 100 --redirects --extract-links --depth 10 -x pdf -x js -x php -x cgi -x txt,json --status-codes 200 201 202 301 302 307 308 --output feroxContentSmallScan.md --url http://"
 
   - trigger: ":ferox med"
-    replace: "feroxbuster --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --threads 150 --no-recursion --output feroxContentScan.md --url http://"
+    replace: "feroxbuster --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --threads 100 --no-recursion --extract-links --status-codes 200 201 202 301 302 307 308 --output feroxContentMediumScan.md --url http://"
 
   - trigger: ":ferox big"
-    replace: "feroxbuster --wordlist /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt --threads 150 --no-recursion --output feroxLargeContentScan.md --url http://"
+    replace: "feroxbuster --wordlist /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt --threads 200 --no-recursion --extract-links --status-codes 200 201 202 301 302 307 308 --output feroxContentLargeScan.md  --url http://"
 
   - trigger: ":ferox sub"
-    replace: "feroxbuster --wordlist /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt --threads 100 --output feroxSubdomainScan.md --url http://"
+    replace: "feroxbuster --wordlist /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt --threads 200 --status-codes 200 201 202 301 302 307 308 --output feroxSubdomainScan.md --url http://"
+    
+  - trigger: ":ferox ext small"
+    replace: "feroxbuster --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt --threads 100 --redirects --extract-links --depth 7 -x bak,cgi,exe,js,json,jsp,log,pdf,php,phps,txt,zip,bat,xml,conf,cfm,api --status-codes 200 201 202 301 302 307 308 --output feroxContentExtSmallScan.md --url http://" 
+
+  - trigger: ":ferox ext med"
+    replace: "feroxbuster --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --threads 100 --redirects --extract-links --depth 7 -x bak,cgi,exe,js,json,jsp,log,pdf,php,phps,txt,zip,bat,xml,conf,cfm,api --status-codes 200 201 202 301 302 307 308 --output feroxContentExtMediumScan.md --url http://"
 
   - trigger: ":go com"
-    replace: ":/home/kali/Shared/Opt-Tools/gobuster/gobuster-linux-amd64/./gobuster dir --wordlist /usr/share/seclists/Discovery/Web-Content/common.txt -t 100 -x .txt,.zip,.html,.php,.js,.json,.pdf,.api -r --output goBuster.md --url http://"
+    replace: "gobuster dir --wordlist /usr/share/seclists/Discovery/Web-Content/common.txt -t 100 -x .txt,.zip,.html,.cgi,.php,.js,.json,.pdf,.api --follow-redirect -e --output goBusterCommon.md --url http://"
     
   - trigger: ":go small"
-    replace: "/home/kali/Shared/Opt-Tools/gobuster/gobuster-linux-amd64/./gobuster dir -s 200,204,301,302,307,500 -x .txt,.zip,.html,.php,.js,.json,.pdf,.api --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -t 200 -r --output goBuster.md --url http://"
+    replace: "gobuster dir -s 200,204,301,302,307,500 --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -t 200 -x .txt,.zip,.html,.cgi,.php,.js,.json,.pdf,.api  --follow-redirect -e --output goBusterSmall.md --url http://"
     
+  - trigger: ":go med"
+    replace: "gobuster dir -s 200,204,301,302,307,500 --wordlist /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -t 200 -x ..txt,.zip,.php,.js,.json  --follow-redirect -e --output goBusterMed.md --url http://"  
+      
   - trigger: ":go big"
-    replace: "/home/kali/Shared/Opt-Tools/gobuster/gobuster-linux-amd64/./gobuster dir -e -s 200,204,301,302,307,500 --wordlist /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt -t 200 -r --output goBuster.md --url http://"    
+    replace: "gobuster dir -e -s 200,204,301,302,307,500 --wordlist /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt -t 200 -r --output goBusterBig.md --url http://"    
    
-  - trigger: ":dirsearch"
-    replace: "python3 /home/kali/Shared/Opt-Tools/dirsearch/dirsearch.py -t 100 --extensions=all  -E -x 400 -w /usr/share/seclists/Discovery/Web-Content/common.txt -l --plain-text-report=dirsearch.md -u http://"
+  - trigger: ":dir com"
+    replace: "dirsearch -t 200 --extensions=all --follow-redirects --recursive --recursion-depth=7 -x 400 -w /usr/share/seclists/Discovery/Web-Content/common.txt -l --plain-text-report=dirsearchCommon.md -u http://"
+
+  - trigger: ":dir small"
+    replace: "dirsearch -t 100 --extensions=all --follow-redirects --recursive --recursion-depth=7 -x 400 -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -l --plain-text-report=dirsearchSmall.md -u http://"
+
+  - trigger: ":dir med"
+    replace: "dirsearch -t 100 --extensions=all --follow-redirects  --recursive --recursion-depth=7 -x 400 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -l --plain-text-report=dirsearchMedium.md -u http://"
 
   - trigger: ":ffuf com"
-    replace: "/home/kali/Shared/Opt-Tools/ffuf/./ffuf -r -w /usr/share/seclists/Discovery/Web-Content/common.txt -e .txt,.js,.json,.php,.html,.bak,.old,.sql -fc 403 -c -t 200 -of md -o ffufCommon.md  -u http://?/FUZZ"
+    replace: "ffuf -r -w /usr/share/seclists/Discovery/Web-Content/common.txt -e .txt,.js,.json,.php,.html,.bak,.sql,.cgi -recursion -recursion-depth 5 -v -c -t 200 -of md -o ffufCommon.md -u http://?/FUZZ"
+
+  - trigger: ":ffuf ext"
+    replace: "ffuf -r -e .txt,.js,.json,.php,.html,.bak,.sql,.cgi,.zip,. -c -t 200 -recursion -recursion-depth 7 -of md -o ffufExtensionScan.md  -u http://?/FUZZ"
+
+  - trigger: ":ffuf lfi"
+    replace: "ffuf -r -w /usr/share/seclists/Fuzzing/LFI/LFI-Jhaddix.txt  -c -t 200 -of md -o ffufLFIScan.md  -fs 0  -e .php,.cgi,.zip -u http://?/PATH=FUZZ"
 
   - trigger: ":ffuf small"
-    replace: "/home/kali/Shared/Opt-Tools/ffuf/./ffuf -r -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -e .txt,.js,.json,.php,.html,.bak,.old,.sql -fc 403 -c -t 200 -of md -o ffufCommon.md  -u http://?/FUZZ"
+    replace: "ffuf -r -w /usr/share/seclists/Discovery/Web-Content/directory-list-lowercase-2.3-small.txt -e .txt,.js,.json,.php,.cgi -recursion -recursion-depth 5 -v -c -t 200 -of md -o ffufContentScanSmall.md -u http://?/FUZZ"
 
   - trigger: ":ffuf med"
-    replace: "/home/kali/Shared/Opt-Tools/ffuf/./ffuf -r -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -fc 403 -of md -o ffufCommon.md -c -t 200 -u http://?/FUZZ"
+    replace: "ffuf -r -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -of md -o ffufContentScanMedium.md -recursion -recursion-depth 5 -v -c -t 200 -u http://?/FUZZ"
 
   - trigger: ":ffuf big"
-    replace: "/home/kali/Shared/Opt-Tools/ffuf/./ffuf -r -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt -fc 403 -of md -o ffufBig.md -c -t 200 -u http://?/FUZZ"
+    replace: "ffuf -r -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-big.txt -of md -o ffufContentScanBig.md -v -c -t 200 -u http://?/FUZZ"
 
-  - trigger: ":ffuf sub"
-    replace: "/home/kali/Shared/Opt-Tools/ffuf/./ffuf -r -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -H 'Host: FUZZ.IP.' -of md -o ffufSubdomains.md -c -t 200 -u http://"
+  - trigger: ":ffuf sub1"
+    replace: "ffuf -w /usr/share/amass/wordlists/subdomains-top1mil-5000.txt:FUZZ -of md -o ffufSubdomains.md -v -c -t 200  -u http://FUZZ."
 
+  - trigger: ":ffuf sub2" 
+    replace: "ffuf -w /usr/share/amass/wordlists/subdomains-top1mil-5000.txt:FUZZ -of md -o ffufSubdomainsSmall.md -v -c -t 200  -u http://FUZZ." 
+
+  - trigger: ":ffuf vhost"
+    replace: "ffuf -w /usr/share/nmap/nselib/data/vhosts-full.lst:FUZZ  -of md -o ffufVhosts.md -t 200 -u http://URL.htb:PORT/ -H 'Host: FUZZ.URL.htb' -fs xxx"
+
+  - trigger: ":ffuf get param"
+    replace: "ffuf -w /usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt:FUZZ -of md -o ffufGetParam.md -t 200 -u http://URL:PORT/PATH/param.php?FUZZ=key"
+  
+  - trigger: ":ffuf post param"
+    replace: "ffuf -w /usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt:FUZZ -X POST -d 'FUZZ=key' -H 'Content-Type: application/x-www-form-urlencoded' -t 200 -of md -o ffufPostParam.md -u http://URL:PORT/PATH/param.php"  
+
+  - trigger: ":ffuf value" 
+    replace: "ffuf -w /home/kali/Shared/Wordlists/ids.txt:FUZZ -X POST -d 'id=FUZZ' -H 'Content-Type: application/x-www-form-urlencoded' -of md -o ffufParamValue.md -t 200 -u http://URL:PORT/PATH/param.php"
   - trigger: ":vhost"
     replace: "/home/kali/Shared/Opt-Tools/gobuster/gobuster-linux-amd64/./gobuster vhost -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt -t 100 --output goBusterSubdomain.md --url http://"
 
   - trigger: ":wfuzz vhost"
     replace: "wfuzz -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt --hc 404 --hl 9  -c -t 50 -H 'Host: FUZZ.DOMAIN.HERE' -u http://"
 
+  - trigger: ":wfuzz lfi"
+    replace: "wfuzz -c -w /usr/share/seclists/Fuzzing/LFI/LFI-Jhaddix.txt --hw 0 -t 100 http://IP/nav.php?page=FUZZ"
+  
     # python server port 80
   - trigger: ":server"
     replace: "python3 -m http.server 80"
